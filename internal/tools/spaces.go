@@ -29,4 +29,49 @@ func registerSpaceTools(s *server.MCPServer, c *client.Client) {
 			return jsonResult(r), nil
 		},
 	)
+
+	s.AddTool(mcp.NewTool("get_space",
+		mcp.WithDescription("Get information about a specific space."),
+		mcp.WithString("spaceId", mcp.Required()),
+	), func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		sp, err := c.GetSpace(ctx, req.GetString("spaceId", ""))
+		if err != nil {
+			return errorResult(err), nil
+		}
+		return jsonResult(sp), nil
+	})
+
+	s.AddTool(mcp.NewTool("create_space",
+		mcp.WithDescription("Create a new space. Requires workspace admin or owner role."),
+		mcp.WithString("name", mcp.Required(), mcp.Min(2), mcp.Max(100)),
+		mcp.WithString("slug", mcp.Min(2), mcp.Max(50)),
+		mcp.WithString("description", mcp.Max(500)),
+	), func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		sp, err := c.CreateSpace(ctx, client.CreateSpaceInput{
+			Name:        req.GetString("name", ""),
+			Slug:        req.GetString("slug", ""),
+			Description: req.GetString("description", ""),
+		})
+		if err != nil {
+			return errorResult(err), nil
+		}
+		return jsonResult(sp), nil
+	})
+
+	s.AddTool(mcp.NewTool("update_space",
+		mcp.WithDescription("Update a space's name or description."),
+		mcp.WithString("spaceId", mcp.Required()),
+		mcp.WithString("name", mcp.Min(2), mcp.Max(100)),
+		mcp.WithString("description", mcp.Max(500)),
+	), func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		sp, err := c.UpdateSpace(ctx, client.UpdateSpaceInput{
+			SpaceID:     req.GetString("spaceId", ""),
+			Name:        req.GetString("name", ""),
+			Description: req.GetString("description", ""),
+		})
+		if err != nil {
+			return errorResult(err), nil
+		}
+		return jsonResult(sp), nil
+	})
 }

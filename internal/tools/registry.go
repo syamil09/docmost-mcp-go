@@ -8,5 +8,6 @@ import (
 func RegisterAll(s *server.MCPServer, c *client.Client) {
 	registerPageTools(s, c)
 	registerSpaceTools(s, c)
+	registerCommentTools(s, c)
 	registerUserTools(s, c)
 }
