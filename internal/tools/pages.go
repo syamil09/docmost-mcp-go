@@ -78,7 +78,7 @@ func registerPageTools(s *server.MCPServer, c *client.Client) {
 	), func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		in := client.UpdatePageInput{
 			PageID:    req.GetString("pageId", ""),
-			Operation: req.GetString("operation", ""),
+			Operation: req.GetString("operation", "append"),
 			Format:    req.GetString("format", "markdown"),
 		}
 		if v := req.GetString("title", ""); v != "" {
@@ -116,17 +116,22 @@ func registerPageTools(s *server.MCPServer, c *client.Client) {
 		mcp.WithString("pageId", mcp.Required()),
 		mcp.WithNumber("limit", mcp.DefaultNumber(50), mcp.Min(1), mcp.Max(200)),
 	), func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		parent, err := c.GetPage(ctx, req.GetString("pageId", ""), "json")
-		if err != nil {
-			return errorResult(err), nil
-		}
+		limit := int(req.GetFloat("limit", 50))
 		r, err := c.ListRecentPages(ctx, client.ListPagesInput{
-			SpaceID: parent.SpaceID,
-			Limit:   int(req.GetFloat("limit", 50)),
+			ParentPageID: req.GetString("pageId", ""),
+			Limit:       limit,
 		})
 		if err != nil {
 			return errorResult(err), nil
 		}
+		children := make([]client.Page, 0, len(r.Items))
+		for _, p := range r.Items {
+			if p.ParentPageID != nil && *p.ParentPageID == req.GetString("pageId", "") {
+				children = append(children, p)
+			}
+		}
+		r.Items = children
+		r.NextCursor = nil
 		return jsonResult(r), nil
 	})
 

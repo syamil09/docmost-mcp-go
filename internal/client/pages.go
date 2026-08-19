@@ -19,9 +19,10 @@ type UpdatePageInput struct {
 }
 
 type ListPagesInput struct {
-	SpaceID string `json:"spaceId,omitempty"`
-	Limit   int    `json:"limit,omitempty"`
-	Cursor  string `json:"cursor,omitempty"`
+	SpaceID      string `json:"spaceId,omitempty"`
+	ParentPageID string `json:"parentPageId,omitempty"`
+	Limit        int    `json:"limit,omitempty"`
+	Cursor       string `json:"cursor,omitempty"`
 }
 
 type ListPagesResult struct {
