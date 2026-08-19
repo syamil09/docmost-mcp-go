@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -90,3 +91,31 @@ func TestClient_ReLogin_On401(t *testing.T) {
 		t.Errorf("expected 1 re-login, got %d", loginCount)
 	}
 }
+
+func TestPages_RoundTrip_CreateGet(t *testing.T) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/auth/login", func(w http.ResponseWriter, r *http.Request) {
+		http.SetCookie(w, &http.Cookie{Name: "authToken", Value: "t", Path: "/"})
+		w.Write([]byte(`{}`))
+	})
+	mux.HandleFunc("/api/pages/create", func(w http.ResponseWriter, r *http.Request) {
+		var in map[string]any
+		json.NewDecoder(r.Body).Decode(&in)
+		body, _ := json.Marshal(map[string]any{
+			"id": "p1", "spaceId": in["spaceId"], "title": in["title"], "content": nil, "position": "a",
+		})
+		w.Write(body)
+	})
+	ts := httptest.NewServer(mux)
+	defer ts.Close()
+	c, _ := New(config.Config{URL: ts.URL, Email: "a@b.c", Password: "hunter22", Timeout: 5 * time.Second})
+	p, err := c.CreatePage(context.Background(), CreatePageInput{SpaceID: "s1", Title: strPtr("T")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.ID != "p1" {
+		t.Errorf("got %+v", p)
+	}
+}
+
+func strPtr(s string) *string { return &s }
