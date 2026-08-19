@@ -50,4 +50,3 @@ func TestLoad_OK_WithAPIKey(t *testing.T) {
 		t.Errorf("got key %q", cfg.APIKey)
 	}
 }
-

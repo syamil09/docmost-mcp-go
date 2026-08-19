@@ -119,7 +119,7 @@ func registerPageTools(s *server.MCPServer, c *client.Client) {
 		limit := int(req.GetFloat("limit", 50))
 		r, err := c.ListRecentPages(ctx, client.ListPagesInput{
 			ParentPageID: req.GetString("pageId", ""),
-			Limit:       limit,
+			Limit:        limit,
 		})
 		if err != nil {
 			return errorResult(err), nil

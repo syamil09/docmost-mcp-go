@@ -17,7 +17,7 @@ The official Docmost MCP server (built into Docmost itself) is gated behind an e
 
 ## Install
 
-Download the binary for your platform from [Releases](../../releases):
+Download the binary for your platform from [Releases](https://github.com/syamil09/docmost-mcp-go/releases):
 
 ```bash
 # macOS (Apple Silicon)
