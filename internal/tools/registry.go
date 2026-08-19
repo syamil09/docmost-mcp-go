@@ -9,5 +9,7 @@ func RegisterAll(s *server.MCPServer, c *client.Client) {
 	registerPageTools(s, c)
 	registerSpaceTools(s, c)
 	registerCommentTools(s, c)
+	registerAttachmentTools(s, c)
+	registerWorkspaceTools(s, c)
 	registerUserTools(s, c)
 }
