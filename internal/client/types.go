@@ -4,6 +4,7 @@ import "encoding/json"
 
 type Page struct {
 	ID           string          `json:"id"`
+	SlugID       string          `json:"slugId"`
 	SpaceID      string          `json:"spaceId"`
 	Title        string          `json:"title"`
 	Slug         string          `json:"slug"`
@@ -15,6 +16,13 @@ type Page struct {
 	CreatedAt    string          `json:"createdAt"`
 	UpdatedAt    string          `json:"updatedAt"`
 	DeletedAt    *string         `json:"deletedAt"`
+	Space        *SpaceBrief     `json:"space,omitempty"`
+}
+
+type SpaceBrief struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
 }
 
 type Space struct {
