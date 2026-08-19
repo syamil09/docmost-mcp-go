@@ -132,7 +132,16 @@ func (c *Client) doOnce(ctx context.Context, path string, in, out any) error {
 		return &DocmostError{StatusCode: resp.StatusCode, Message: msg}
 	}
 	if out != nil && len(b) > 0 {
-		if err := json.Unmarshal(b, out); err != nil {
+		var envelope struct {
+			Data json.RawMessage `json:"data"`
+		}
+		if err := json.Unmarshal(b, &envelope); err != nil {
+			return fmt.Errorf("decode envelope %s: %w", path, err)
+		}
+		if len(envelope.Data) == 0 {
+			return fmt.Errorf("decode %s: missing data field", path)
+		}
+		if err := json.Unmarshal(envelope.Data, out); err != nil {
 			return fmt.Errorf("decode %s: %w", path, err)
 		}
 	}

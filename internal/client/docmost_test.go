@@ -48,7 +48,7 @@ func TestClient_Login_OnFirstCall(t *testing.T) {
 		if got := r.Header.Get("Authorization"); got != "Bearer jwt-abc" {
 			t.Errorf("missing/wrong bearer: %q", got)
 		}
-		w.Write([]byte(`{"id":"u1","name":"x","email":"u@e.com"}`))
+		w.Write([]byte(`{"data":{"id":"u1","name":"x","email":"u@e.com"}}`))
 	})
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
@@ -77,7 +77,7 @@ func TestClient_ReLogin_On401(t *testing.T) {
 			w.Write([]byte(`{"message":"unauthorized"}`))
 			return
 		}
-		w.Write([]byte(`{"id":"u1","name":"x","email":"u@e.com"}`))
+		w.Write([]byte(`{"data":{"id":"u1","name":"x","email":"u@e.com"}}`))
 	})
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
@@ -102,7 +102,9 @@ func TestPages_RoundTrip_CreateGet(t *testing.T) {
 		var in map[string]any
 		json.NewDecoder(r.Body).Decode(&in)
 		body, _ := json.Marshal(map[string]any{
-			"id": "p1", "spaceId": in["spaceId"], "title": in["title"], "content": nil, "position": "a",
+			"data": map[string]any{
+				"id": "p1", "spaceId": in["spaceId"], "title": in["title"], "content": nil, "position": "a",
+			},
 		})
 		w.Write(body)
 	})
