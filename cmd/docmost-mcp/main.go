@@ -10,6 +10,8 @@ import (
 	docsrv "github.com/syamil09/docmost-mcp-go/internal/server"
 )
 
+var version = "dev"
+
 func main() {
 	log.SetOutput(os.Stderr)
 	cfg, err := config.Load()
@@ -21,7 +23,7 @@ func main() {
 		log.Fatalf("client: %v", err)
 	}
 	s := docsrv.New(c)
-	log.Printf("docmost-mcp-go v0.1.0 connecting to %s", cfg.URL)
+	log.Printf("docmost-mcp-go %s connecting to %s", version, cfg.URL)
 	if err := server.ServeStdio(s); err != nil {
 		log.Fatalf("serve: %v", err)
 	}
