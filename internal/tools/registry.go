@@ -6,6 +6,7 @@ import (
 )
 
 func RegisterAll(s *server.MCPServer, c *client.Client) {
-	registerUserTools(s, c)
+	registerPageTools(s, c)
 	registerSpaceTools(s, c)
+	registerUserTools(s, c)
 }
