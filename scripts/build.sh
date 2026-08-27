@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 VERSION="${1:-dev}"
-LDFLAGS="-ldflags=-s -w -X main.version=${VERSION}"
+LDFLAGS=(-ldflags "-s -w -X main.version=${VERSION}")
 mkdir -p dist
 TARGETS=(
 	"windows amd64 .exe"
@@ -16,7 +16,7 @@ for t in "${TARGETS[@]}"; do
 	OUT="dist/docmost-mcp-${GOOS}-${GOARCH}${EXT}"
 	echo "Building $OUT..."
 	CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" \
-		go build ${LDFLAGS} -o "$OUT" ./cmd/docmost-mcp
+		go build "${LDFLAGS[@]}" -o "$OUT" ./cmd/docmost-mcp
 done
 echo "Done. Artifacts:"
 ls -lh dist/
